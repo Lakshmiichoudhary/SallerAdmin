@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SellerAdmin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <form id="productForm">
+            <div class="form-group">
+                <label for="Sellingprice">Selling Price</label>
+                <input type="number" class="form-control" id="Sellingprice" name="Sellingprice">
+            </div>
+            <div class="form-group">
+                <label for="ProductName">Product Name</label>
+                <input type="text" class="form-control" id="ProductName" name="ProductName">
+            </div>
+            <div class="form-group">
+                <label for="category">Choose a Category</label>
+                <select class="form-control" id="category" name="category">
+                    <option value="Electronic Item">Electronic Item</option>
+                    <option value="Cosmetic">Cosmetic</option>
+                    <option value="Foot Ware">Foot Ware</option>
+                    <option value="Cloths">Cloths</option>
+                </select>
+            </div>
+            <button type="submit" class="btn btn-primary">Add Product</button>
+        </form>
+    </div>
+    <ul id="productList"></ul>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.5.1/axios.min.js"></script>
+    <script src="script.js"></script>
+</body>
+</html>
