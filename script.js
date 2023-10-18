@@ -1,20 +1,17 @@
 'use strict';
 
-// Creating element variables
 const form = document.getElementById('productForm');
-const link = 'https://crudcrud.com/api/a486394b3d7f4731abd853dcffe34050/AddProduct';
-const productList = document.getElementById('productList');
+const link = 'https://crudcrud.com/api/437839843cd3432385419462f6de1ed8/AddProduct';
+const productList = document.querySelector('.productList table');
 
-// Add an event listener to the form for form submission
 form.addEventListener('submit', addProduct);
 
-// Function to handle form submission
 async function addProduct(event) {
   event.preventDefault();
 
-  const sellingPrice = event.target.Sellingprice.value;
-  const productName = event.target.ProductName.value;
-  const category = event.target.category.value;
+  const sellingPrice = event.target.elements.Sellingprice.value;
+  const productName = event.target.elements.ProductName.value;
+  const category = event.target.elements.category.value;
 
   const product = {
     sellingPrice,
@@ -27,56 +24,60 @@ async function addProduct(event) {
     displayProduct(response.data);
 
     // Clear form inputs
-    event.target.Sellingprice.value = '';
-    event.target.ProductName.value = '';
-    event.target.category.value = '';
+    event.target.elements.Sellingprice.value = '';
+    event.target.elements.ProductName.value = '';
+    event.target.elements.category.value = '';
   } catch (error) {
     console.error(error);
   }
 }
 
-// Function to display product data
 function displayProduct(product) {
-  // Create a new list item
-  const newItem = document.createElement('li');
-  newItem.textContent = `Name: ${product.productName}, Price: ${product.sellingPrice}, Category: ${product.category}`;
-
-  // Create a delete button
+  const newRow = document.createElement('tr');
+  
+  const productNameCell = document.createElement('td');
+  productNameCell.textContent = product.productName;
+  
+  const sellingPriceCell = document.createElement('td');
+  sellingPriceCell.textContent = product.sellingPrice;
+  
+  const deleteButtonCell = document.createElement('td');
   const deleteButton = document.createElement('button');
   deleteButton.textContent = 'Delete';
-
-  // Set a custom data attribute to store the product ID
+  
   deleteButton.dataset.productId = product._id;
-
-  // Add an event listener to the delete button
   deleteButton.addEventListener('click', deleteProduct);
-
-  newItem.appendChild(deleteButton);
-
-  // Append the new item to the product list
-  productList.appendChild(newItem);
+  
+  deleteButtonCell.appendChild(deleteButton);
+  
+  newRow.appendChild(productNameCell);
+  newRow.appendChild(sellingPriceCell);
+  newRow.appendChild(deleteButtonCell);
+  
+  const categoryTableId = product.category + 'Table';
+  const categoryTable = document.getElementById(categoryTableId);
+  
+  if (categoryTable) {
+    categoryTable.querySelector('table').appendChild(newRow);
+  }
 }
 
-// Function to handle product deletion
 async function deleteProduct(event) {
   const productId = event.target.dataset.productId;
 
   try {
     await axios.delete(`${link}/${productId}`);
-    // Remove the deleted product item from the list
-    event.target.parentElement.remove();
+    event.target.parentElement.parentElement.remove();
   } catch (error) {
     console.error(error);
   }
 }
 
-// Load initial data when the page is loaded
 window.addEventListener('DOMContentLoaded', async () => {
-  if (productList.children.length === 0) { // Check if the list is empty
+  if (productList.rows.length === 1) {
     try {
       const response = await axios.get(link);
       response.data.forEach((product) => {
-        // Load initial data here
         displayProduct(product);
       });
     } catch (error) {
