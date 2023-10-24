@@ -1,8 +1,8 @@
 'use strict';
 
 const form = document.getElementById('productForm');
-const link = 'https://crudcrud.com/api/437839843cd3432385419462f6de1ed8/AddProduct';
-const productList = document.querySelector('.productList table');
+const link = 'https://crudcrud.com/api/987507c7d02f4805a8e3fdfd8970d2d6/AddProduct';
+const productList = document.querySelector('#productList');
 
 form.addEventListener('submit', addProduct);
 
@@ -33,55 +33,51 @@ async function addProduct(event) {
 }
 
 function displayProduct(product) {
-  const newRow = document.createElement('tr');
-  
-  const productNameCell = document.createElement('td');
-  productNameCell.textContent = product.productName;
-  
-  const sellingPriceCell = document.createElement('td');
-  sellingPriceCell.textContent = product.sellingPrice;
-  
-  const deleteButtonCell = document.createElement('td');
+
+  const s = product.sellingPrice;
+  const p = product.productName;
+  const ca = product.category;
+
+  let newItem = document.createElement('li');
+  newItem.id = "ele";
+  newItem.appendChild(document.createTextNode(`${s}, ${p}`));
+
   const deleteButton = document.createElement('button');
   deleteButton.textContent = 'Delete';
   
-  deleteButton.dataset.productId = product._id;
-  deleteButton.addEventListener('click', deleteProduct);
-  
-  deleteButtonCell.appendChild(deleteButton);
-  
-  newRow.appendChild(productNameCell);
-  newRow.appendChild(sellingPriceCell);
-  newRow.appendChild(deleteButtonCell);
-  
-  const categoryTableId = product.category + 'Table';
-  const categoryTable = document.getElementById(categoryTableId);
-  
-  if (categoryTable) {
-    categoryTable.querySelector('table').appendChild(newRow);
-  }
+  deleteButton.addEventListener('click', () => deleteProduct(product._id, newItem));
+  newItem.appendChild(deleteButton);
+
+  const categoryElement = document.getElementById(ca.replace(/ /g, '')); 
+
+  if (categoryElement) {
+    categoryElement.appendChild(newItem);
+  } 
 }
 
-async function deleteProduct(event) {
-  const productId = event.target.dataset.productId;
-
+async function deleteProduct(productId, listItem) {
   try {
     await axios.delete(`${link}/${productId}`);
-    event.target.parentElement.parentElement.remove();
+    listItem.remove();
   } catch (error) {
     console.error(error);
   }
 }
-
 window.addEventListener('DOMContentLoaded', async () => {
-  if (productList.rows.length === 1) {
-    try {
-      const response = await axios.get(link);
-      response.data.forEach((product) => {
+  try {
+    const response = await axios.get(link); // Fetch data from the API
+    const productData = response.data;
+
+    // Check if there is data to display
+    if (productData && productData.length > 0) {
+    
+      // Display the fetched data
+      productData.forEach((product) => {
         displayProduct(product);
       });
-    } catch (error) {
-      console.error(error);
     }
+  } catch (error) {
+    console.error(error);
   }
 });
+
